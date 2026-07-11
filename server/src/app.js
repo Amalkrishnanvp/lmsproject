@@ -9,7 +9,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Your frontend port
+    origin: "https://your-frontend.onrender.com", // Your frontend port
     credentials: true, // Important for cookies
   })
 );
