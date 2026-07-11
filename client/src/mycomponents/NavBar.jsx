@@ -175,67 +175,80 @@ export default function NavBar() {
         </div>
       </nav>
 
-      {/* Mobile Sheet */}
+      {/* Mobile Sheet - WITH MORE PADDING */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="right" className="dark:bg-gray-900">
-          <div className="flex flex-col gap-4 mt-8">
+        <SheetContent side="right" className="dark:bg-gray-900 p-6">
+          <div className="flex flex-col gap-6 mt-8">
+            {/* User Info */}
             {isAuthenticated && (
-              <div className="flex items-center gap-2 pb-2 border-b dark:border-gray-700">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-primary/10 text-primary">
+              <div className="flex items-center gap-3 pb-4 border-b dark:border-gray-700">
+                <Avatar className="h-10 w-10">
+                  <AvatarFallback className="bg-primary/10 text-primary text-sm">
                     {getUserInitials()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="font-medium dark:text-white">
-                  {getUserName()}
-                </span>
+                <div>
+                  <p className="font-medium dark:text-white text-base">
+                    {getUserName()}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {user?.email}
+                  </p>
+                </div>
               </div>
             )}
-            <Link
-              to="/"
-              onClick={() => setMobileOpen(false)}
-              className="dark:text-gray-300"
-            >
-              Home
-            </Link>
-            {isAuthenticated && (
+
+            {/* Navigation Links */}
+            <div className="flex flex-col gap-2">
               <Link
-                to="/user/courses"
+                to="/"
                 onClick={() => setMobileOpen(false)}
-                className="dark:text-gray-300"
+                className="text-base font-medium dark:text-gray-200 hover:text-primary dark:hover:text-white py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
-                My Courses
+                🏠 Home
               </Link>
-            )}
+              {isAuthenticated && (
+                <Link
+                  to="/user/courses"
+                  onClick={() => setMobileOpen(false)}
+                  className="text-base font-medium dark:text-gray-200 hover:text-primary dark:hover:text-white py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                >
+                  📚 My Courses
+                </Link>
+              )}
+            </div>
+
             <div className="border-t dark:border-gray-700"></div>
 
             {/* Theme toggle in mobile menu */}
-            <div className="flex flex-col gap-2">
-              <span className="text-sm dark:text-gray-300">Theme:</span>
-              <div className="flex gap-2">
+            <div className="flex flex-col gap-3">
+              <span className="text-sm font-medium dark:text-gray-300">
+                Theme
+              </span>
+              <div className="grid grid-cols-3 gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setTheme("light")}
-                  className="dark:border-gray-600 dark:text-gray-300 flex-1"
+                  className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                 >
-                  Light
+                  ☀️ Light
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setTheme("dark")}
-                  className="dark:border-gray-600 dark:text-gray-300 flex-1"
+                  className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                 >
-                  Dark
+                  🌙 Dark
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setTheme("system")}
-                  className="dark:border-gray-600 dark:text-gray-300 flex-1"
+                  className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                 >
-                  System
+                  💻 System
                 </Button>
               </div>
             </div>
@@ -243,29 +256,31 @@ export default function NavBar() {
             <div className="border-t dark:border-gray-700"></div>
 
             {/* Mobile Auth Buttons */}
-            {!isAuthenticated ? (
-              <Button
-                className="w-full"
-                onClick={() => {
-                  setMobileOpen(false);
-                  navigate("/login");
-                }}
-              >
-                Login
-              </Button>
-            ) : (
-              <Button
-                variant="destructive"
-                className="w-full"
-                onClick={() => {
-                  setMobileOpen(false);
-                  logout();
-                  navigate("/");
-                }}
-              >
-                Logout
-              </Button>
-            )}
+            <div className="pt-2">
+              {!isAuthenticated ? (
+                <Button
+                  className="w-full py-6 text-base"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    navigate("/login");
+                  }}
+                >
+                  🔑 Login
+                </Button>
+              ) : (
+                <Button
+                  variant="destructive"
+                  className="w-full py-6 text-base"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    logout();
+                    navigate("/");
+                  }}
+                >
+                  🚪 Logout
+                </Button>
+              )}
+            </div>
           </div>
         </SheetContent>
       </Sheet>
