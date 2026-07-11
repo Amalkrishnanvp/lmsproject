@@ -9,7 +9,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://your-frontend.onrender.com", // Your frontend port
+    origin: "https://lmsproject-1-f65v.onrender.com", // Your frontend port
     credentials: true, // Important for cookies
   })
 );
