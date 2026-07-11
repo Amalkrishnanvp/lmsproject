@@ -1,10 +1,9 @@
 // src/mycomponents/NavBar.jsx
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Menu, LogOut, BookOpen, User, Moon, Sun } from "lucide-react";
+import { Menu, LogOut, BookOpen, Sun, Moon } from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useAuthStore } from "../utils/auth.store";
 import { useTheme } from "@/components/ThemeProvider";
@@ -17,7 +16,7 @@ import {
 
 export default function NavBar() {
   const { user, isAuthenticated, logout } = useAuthStore();
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -80,38 +79,46 @@ export default function NavBar() {
               )}
             </div>
 
-            {/* Auth Section */}
-            <div className="flex items-center gap-4">
-              {/* Theme Toggle */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="dark:border-gray-600 dark:hover:bg-gray-800"
-                  >
-                    <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                    <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                    <span className="sr-only">Toggle theme</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setTheme("light")}>
-                    Light
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme("dark")}>
-                    Dark
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme("system")}>
-                    System
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            {/* Right Section */}
+            <div className="flex items-center gap-2">
+              {/* Theme Toggle - Desktop */}
+              <div className="hidden md:block">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="dark:border-gray-600 dark:hover:bg-gray-800"
+                    >
+                      <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                      <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                      <span className="sr-only">Toggle theme</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setTheme("light")}>
+                      Light
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setTheme("dark")}>
+                      Dark
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setTheme("system")}>
+                      System
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
 
+              {/* Auth Section */}
               {!isAuthenticated ? (
-                <Button onClick={() => navigate("/login")}>Login</Button>
+                <Button
+                  onClick={() => navigate("/login")}
+                  className="hidden md:inline-flex"
+                >
+                  Login
+                </Button>
               ) : (
-                <div className="relative" ref={dropdownRef}>
+                <div className="relative hidden md:block" ref={dropdownRef}>
                   <div
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                     className="cursor-pointer"
@@ -143,6 +150,7 @@ export default function NavBar() {
                         onClick={() => {
                           setDropdownOpen(false);
                           logout();
+                          navigate("/");
                         }}
                       >
                         <LogOut className="h-4 w-4" />
@@ -153,7 +161,7 @@ export default function NavBar() {
                 </div>
               )}
 
-              {/* Mobile Menu */}
+              {/* Mobile Menu Button - Only shows on mobile */}
               <div className="md:hidden">
                 <button
                   onClick={() => setMobileOpen(!mobileOpen)}
@@ -202,37 +210,42 @@ export default function NavBar() {
             <div className="border-t dark:border-gray-700"></div>
 
             {/* Theme toggle in mobile menu */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-2">
               <span className="text-sm dark:text-gray-300">Theme:</span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTheme("light")}
-                className="dark:border-gray-600 dark:text-gray-300"
-              >
-                Light
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTheme("dark")}
-                className="dark:border-gray-600 dark:text-gray-300"
-              >
-                Dark
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTheme("system")}
-                className="dark:border-gray-600 dark:text-gray-300"
-              >
-                System
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setTheme("light")}
+                  className="dark:border-gray-600 dark:text-gray-300 flex-1"
+                >
+                  Light
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setTheme("dark")}
+                  className="dark:border-gray-600 dark:text-gray-300 flex-1"
+                >
+                  Dark
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setTheme("system")}
+                  className="dark:border-gray-600 dark:text-gray-300 flex-1"
+                >
+                  System
+                </Button>
+              </div>
             </div>
 
             <div className="border-t dark:border-gray-700"></div>
+
+            {/* Mobile Auth Buttons */}
             {!isAuthenticated ? (
               <Button
+                className="w-full"
                 onClick={() => {
                   setMobileOpen(false);
                   navigate("/login");
@@ -243,6 +256,7 @@ export default function NavBar() {
             ) : (
               <Button
                 variant="destructive"
+                className="w-full"
                 onClick={() => {
                   setMobileOpen(false);
                   logout();
