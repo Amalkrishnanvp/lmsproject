@@ -73,12 +73,16 @@ export function LoginForm() {
   };
 
   return (
-    <div className="flex justify-center px-4 py-8">
+    <div className="flex justify-center px-4 py-8 min-h-screen dark:bg-black">
       <div className="w-full max-w-md">
-        <Card>
+        <Card className="border-emerald-100 dark:border-white/20 dark:bg-black">
           <CardHeader>
-            <CardTitle>Login</CardTitle>
-            <CardDescription>Enter your credentials</CardDescription>
+            <CardTitle className="text-gray-900 dark:text-white">
+              Login
+            </CardTitle>
+            <CardDescription className="text-gray-500 dark:text-gray-400">
+              Enter your credentials
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -90,6 +94,7 @@ export function LoginForm() {
                 name="email"
                 required
                 disabled={mutation.isPending}
+                className="dark:bg-black dark:border-white/20 dark:text-white dark:placeholder:text-gray-500 focus-visible:ring-emerald-500 dark:focus-visible:ring-white/40"
               />
               <Input
                 type="password"
@@ -99,11 +104,16 @@ export function LoginForm() {
                 onChange={handleChange}
                 required
                 disabled={mutation.isPending}
+                className="dark:bg-black dark:border-white/20 dark:text-white dark:placeholder:text-gray-500 focus-visible:ring-emerald-500 dark:focus-visible:ring-white/40"
               />
-              {serverError && <p className="text-red-500">{serverError}</p>}{" "}
+              {serverError && (
+                <p className="text-red-600 dark:text-red-400">
+                  {serverError}
+                </p>
+              )}{" "}
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-black dark:border dark:border-white/20 dark:hover:bg-white/10 dark:text-white"
                 disabled={mutation.isPending}
               >
                 {mutation.isPending ? "Logging in..." : "Login"}{" "}

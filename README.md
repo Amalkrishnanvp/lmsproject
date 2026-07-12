@@ -108,7 +108,7 @@ GET `/api/user/courses/:courseId`
 
 Returns complete course details including modules, study materials, assignments, live sessions, faculty, and progress.
 
-PATCH `/api/user/materials/:materialId/toggle`
+PATCH `/api/user/materials/:materialId`
 
 Toggles study material completion status.
 
