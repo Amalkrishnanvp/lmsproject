@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   BookOpen,
@@ -25,13 +24,12 @@ import {
   Clock,
   User,
   Mail,
-  Award,
   CheckCircle,
-  XCircle,
   ExternalLink,
   ChevronLeft,
   PlayCircle,
   FileQuestion,
+  Lock,
 } from "lucide-react";
 
 export default function CoursesDetailsPage() {
@@ -67,6 +65,11 @@ export default function CoursesDetailsPage() {
   }, [courseId, isAuthenticated, navigate]);
 
   const handleMaterialToggle = async (moduleId, materialId, currentStatus) => {
+    // Don't allow if classroom is not assigned
+    if (!course?.classroomAssigned) {
+      return;
+    }
+
     setUpdating(true);
     try {
       // Call API to update material status
@@ -254,12 +257,19 @@ export default function CoursesDetailsPage() {
                 <Badge className="text-sm bg-emerald-600 dark:bg-white dark:text-black">
                   {course.progress}% Complete
                 </Badge>
-                {course.classroomAssigned && (
+                {course.classroomAssigned ? (
                   <Badge
                     variant="outline"
                     className="dark:border-white/20 dark:text-gray-200"
                   >
                     🏫 Classroom
+                  </Badge>
+                ) : (
+                  <Badge
+                    variant="outline"
+                    className="dark:border-white/20 dark:text-gray-200 bg-yellow-50 dark:bg-yellow-900/20"
+                  >
+                    🔒 Not Assigned
                   </Badge>
                 )}
               </div>
@@ -358,60 +368,76 @@ export default function CoursesDetailsPage() {
                     <CardContent>
                       {/* Check if there are study materials */}
                       {module.studyMaterials && module.studyMaterials.length > 0 ? (
-                        <div className="space-y-3">
-                          {module.studyMaterials.map((material) => (
-                            <div
-                              key={material._id}
-                              className="flex items-center justify-between p-3 bg-gray-50 dark:bg-white/5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-                            >
-                              <div className="flex items-center gap-3 flex-1">
-                                <Checkbox
-                                  checked={material.completed}
-                                  onCheckedChange={() =>
-                                    handleMaterialToggle(
-                                      module._id,
-                                      material._id,
-                                      material.completed
-                                    )
-                                  }
-                                  disabled={updating}
-                                  className="h-5 w-5 dark:border-white/40"
-                                />
-                                <div className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                                  {getMaterialIcon(material.type)}
-                                  <span
-                                    className={
-                                      material.completed
-                                        ? "line-through text-gray-500 dark:text-gray-500"
-                                        : ""
-                                    }
-                                  >
-                                    {material.title}
-                                  </span>
-                                  <Badge
-                                    variant="outline"
-                                    className="text-xs dark:border-white/20 dark:text-gray-300"
-                                  >
-                                    {material.type}
-                                  </Badge>
-                                </div>
-                              </div>
-                              {material.url && (
-                                <a
-                                  href={material.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-emerald-600 hover:text-emerald-700 dark:text-white dark:hover:text-gray-300"
-                                >
-                                  <ExternalLink className="h-4 w-4" />
-                                </a>
-                              )}
-                              {material.completed && (
-                                <CheckCircle className="h-4 w-4 text-green-500 ml-2" />
-                              )}
+                        <>
+                          {/* Show warning if classroom not assigned */}
+                          {!course.classroomAssigned && (
+                            <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg flex items-center gap-2">
+                              <Lock className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                              <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                                Classroom not assigned yet. You cannot mark materials as completed.
+                              </p>
                             </div>
-                          ))}
-                        </div>
+                          )}
+
+                          <div className="space-y-3">
+                            {module.studyMaterials.map((material) => (
+                              <div
+                                key={material._id}
+                                className={`flex items-center justify-between p-3 bg-gray-50 dark:bg-white/5 rounded-lg transition-colors ${
+                                  !course.classroomAssigned 
+                                    ? 'opacity-75 cursor-not-allowed' 
+                                    : 'hover:bg-gray-100 dark:hover:bg-white/10'
+                                }`}
+                              >
+                                <div className="flex items-center gap-3 flex-1">
+                                  <Checkbox
+                                    checked={material.completed}
+                                    onCheckedChange={() =>
+                                      handleMaterialToggle(
+                                        module._id,
+                                        material._id,
+                                        material.completed
+                                      )
+                                    }
+                                    disabled={updating || !course.classroomAssigned}
+                                    className="h-5 w-5 dark:border-white/40"
+                                  />
+                                  <div className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                                    {getMaterialIcon(material.type)}
+                                    <span
+                                      className={
+                                        material.completed
+                                          ? "line-through text-gray-500 dark:text-gray-500"
+                                          : ""
+                                      }
+                                    >
+                                      {material.title}
+                                    </span>
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs dark:border-white/20 dark:text-gray-300"
+                                    >
+                                      {material.type}
+                                    </Badge>
+                                  </div>
+                                </div>
+                                {material.url && (
+                                  <a
+                                    href={material.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-emerald-600 hover:text-emerald-700 dark:text-white dark:hover:text-gray-300"
+                                  >
+                                    <ExternalLink className="h-4 w-4" />
+                                  </a>
+                                )}
+                                {material.completed && (
+                                  <CheckCircle className="h-4 w-4 text-green-500 ml-2" />
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </>
                       ) : (
                         /* No study materials message */
                         <div className="flex flex-col items-center justify-center py-8 text-center">
