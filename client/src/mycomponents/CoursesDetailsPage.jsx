@@ -31,6 +31,7 @@ import {
   ExternalLink,
   ChevronLeft,
   PlayCircle,
+  FileQuestion,
 } from "lucide-react";
 
 export default function CoursesDetailsPage() {
@@ -355,60 +356,74 @@ export default function CoursesDetailsPage() {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-3">
-                        {module.studyMaterials.map((material) => (
-                          <div
-                            key={material._id}
-                            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-white/5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-                          >
-                            <div className="flex items-center gap-3 flex-1">
-                              <Checkbox
-                                checked={material.completed}
-                                onCheckedChange={() =>
-                                  handleMaterialToggle(
-                                    module._id,
-                                    material._id,
-                                    material.completed
-                                  )
-                                }
-                                disabled={updating}
-                                className="h-5 w-5 dark:border-white/40"
-                              />
-                              <div className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                                {getMaterialIcon(material.type)}
-                                <span
-                                  className={
-                                    material.completed
-                                      ? "line-through text-gray-500 dark:text-gray-500"
-                                      : ""
+                      {/* Check if there are study materials */}
+                      {module.studyMaterials && module.studyMaterials.length > 0 ? (
+                        <div className="space-y-3">
+                          {module.studyMaterials.map((material) => (
+                            <div
+                              key={material._id}
+                              className="flex items-center justify-between p-3 bg-gray-50 dark:bg-white/5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+                            >
+                              <div className="flex items-center gap-3 flex-1">
+                                <Checkbox
+                                  checked={material.completed}
+                                  onCheckedChange={() =>
+                                    handleMaterialToggle(
+                                      module._id,
+                                      material._id,
+                                      material.completed
+                                    )
                                   }
-                                >
-                                  {material.title}
-                                </span>
-                                <Badge
-                                  variant="outline"
-                                  className="text-xs dark:border-white/20 dark:text-gray-300"
-                                >
-                                  {material.type}
-                                </Badge>
+                                  disabled={updating}
+                                  className="h-5 w-5 dark:border-white/40"
+                                />
+                                <div className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                                  {getMaterialIcon(material.type)}
+                                  <span
+                                    className={
+                                      material.completed
+                                        ? "line-through text-gray-500 dark:text-gray-500"
+                                        : ""
+                                    }
+                                  >
+                                    {material.title}
+                                  </span>
+                                  <Badge
+                                    variant="outline"
+                                    className="text-xs dark:border-white/20 dark:text-gray-300"
+                                  >
+                                    {material.type}
+                                  </Badge>
+                                </div>
                               </div>
+                              {material.url && (
+                                <a
+                                  href={material.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-emerald-600 hover:text-emerald-700 dark:text-white dark:hover:text-gray-300"
+                                >
+                                  <ExternalLink className="h-4 w-4" />
+                                </a>
+                              )}
+                              {material.completed && (
+                                <CheckCircle className="h-4 w-4 text-green-500 ml-2" />
+                              )}
                             </div>
-                            {material.url && (
-                              <a
-                                href={material.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-emerald-600 hover:text-emerald-700 dark:text-white dark:hover:text-gray-300"
-                              >
-                                <ExternalLink className="h-4 w-4" />
-                              </a>
-                            )}
-                            {material.completed && (
-                              <CheckCircle className="h-4 w-4 text-green-500 ml-2" />
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                          ))}
+                        </div>
+                      ) : (
+                        /* No study materials message */
+                        <div className="flex flex-col items-center justify-center py-8 text-center">
+                          <FileQuestion className="h-12 w-12 text-gray-300 dark:text-gray-600 mb-3" />
+                          <p className="text-gray-500 dark:text-gray-400 font-medium">
+                            No study materials available
+                          </p>
+                          <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+                            This module doesn't have any study materials yet.
+                          </p>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 );
@@ -465,9 +480,15 @@ export default function CoursesDetailsPage() {
                 </Card>
               ))
             ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                No assignments yet
-              </p>
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <FileQuestion className="h-12 w-12 text-gray-300 dark:text-gray-600 mb-3" />
+                <p className="text-gray-500 dark:text-gray-400 font-medium">
+                  No assignments yet
+                </p>
+                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+                  Check back later for assignments.
+                </p>
+              </div>
             )}
           </TabsContent>
 
@@ -518,9 +539,15 @@ export default function CoursesDetailsPage() {
                 </Card>
               ))
             ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                No live sessions scheduled
-              </p>
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <Calendar className="h-12 w-12 text-gray-300 dark:text-gray-600 mb-3" />
+                <p className="text-gray-500 dark:text-gray-400 font-medium">
+                  No live sessions scheduled
+                </p>
+                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+                  Check back later for upcoming sessions.
+                </p>
+              </div>
             )}
           </TabsContent>
         </Tabs>
